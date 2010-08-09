@@ -24,17 +24,25 @@ var player1 = 0;
 var player2 = 1;
 var colorbase = 2;
 var board = new Array(w * w);
-// init board, should be a subroutine
-var i=0;
-while(i<s){
-  board[i++] = Math.floor(Math.random()*ncolor+coff)
-}
-board[0]   = player1;
-board[s-1] = player2;
+
 var m = document.getElementById("m");
 function msg( t ) {
   m.innerHTML = t;
 }
+
+
+function initboard() {
+  var i=0;
+  while(i<s){
+    board[i++] = Math.floor(Math.random()*ncolor+coff)
+  }
+  board[0]   = player1;
+  board[s-1] = player2;
+  msg("Welcome to Filler Creep");  
+}
+
+initboard();
+
 function debug( t ) {
   document.getElementById("debug").innerHTML += "| " + t;
 }
@@ -194,63 +202,71 @@ function onClick(e) {
 }
 ig.onclick=onClick;
 //ig.addEventListener('onclick', onClick, false);
-drawBoard();
+
+function newgame() {
+  initboard();
+  drawBoard();
+}
+newgame();
 
 		</script> 
-          <div id="ai">
-            AI: 
-            <a href="#" onclick="changeAI('random');">Random</a>
-            <a href="#" onclick="changeAI('order');">Ordered</a>
-            <a href="#" onclick="changeAI('maximum');">Maximum</a>
-            <a href="#" onclick="changeAI('alpha beta 1');">AlphaBeta 1</a>
-            <a href="#" onclick="changeAI('alpha beta 3');">AlphaBeta 3</a>
-            <a href="#" onclick="changeAI('alpha beta 5');">AlphaBeta 5</a>
-            <a href="#" onclick="changeAI('alpha beta 7');">AlphaBeta 7</a>
-            <a href="#" onclick="changeAI('alpha beta 9');">AlphaBeta 9</a>
-          </div>
-          <div id="instructions">
-            I was going to cut this down and make a 1K javascript
-            entry out of it, but I don't feel like it. I think the AI
-            stuff is a bit more fun.<p/>
+                <div id="controls">
+                  <a href="#" onclick="newgame();">New Game!</a>
+                </div>
+                
+                <div id="ai">
+                  AI:
+                  <a href="#" onclick="changeAI('random');">Random</a>
+                  <a href="#" onclick="changeAI('order');">Ordered</a>
+                  <a href="#" onclick="changeAI('maximum');">Maximum</a>
+                  <a href="#" onclick="changeAI('alpha beta 1');">AlphaBeta 1</a>
+                  <a href="#" onclick="changeAI('alpha beta 3');">AlphaBeta 3</a>
+                  <a href="#" onclick="changeAI('alpha beta 5');">AlphaBeta 5</a>
+                  <a href="#" onclick="changeAI('alpha beta 7');">AlphaBeta 7</a>
+                  <a href="#" onclick="changeAI('alpha beta 9');">AlphaBeta 9</a>
+                </div>
+                <div id="instructions">
+                  I was going to cut this down and make a 1K javascript
+                  entry out of it, but I don't feel like it. I think the AI
+                  stuff is a bit more fun.<p/>
+                  
+                  You are the black creep and you are fighting the white
+                  creep for dominion. You want to grow and creep over more
+                  area on the map than the white creep. The white creep will
+                  try to take over more of the map than you.<p/>
+                  
+                  At any one time you can extend your creep by
+                  clicking on a colour adjacent to your creep. This will
+                  cause your creep to expand and grow into all spaces of
+                  that colour that touches your creep.<p/>
 
-            You are the black creep and you are fighting the white
-            creep for dominion. You want to grow and creep over more
-            area on the map than the white creep. The white creep will
-            try to take over more of the map than you.<p/>
+                  At the end of the game you might not have any more space
+                  to grow, but your opponent might. Keep clicking on open
+                  map position (positions not black or white) until your
+                  opponent has filled them in. <p/>
+                  
+                  <ul>
+                    <li> The random AI simply chooses a random colour to grow into,
+                      it might never terminate so watch out. This AI is
+                      very stupid.</li>
+                    <li> The Ordered AI simply iterates through all of the
+                      colours regardless of adjacent colours. It is
+                      guaranteed to terminate but it might take a few turns
+                      to do so. This AI is stupid. </li>
+                    <li> Maximum AI will maximize its creep size on every
+                      move, it will probably beat you if you're not paying
+                      attention.</li>
+                    <li>Alpha Beta 1 through 9 uses AI alpha beta "pruning"
+                      techniques without the pruning. This AI makes the
+                      assumption that you are playing optimally (which you
+                      aren't) so you might catch it up if it can't look ahead
+                      far enough or you're playing like an idiot and somehow
+                      that works out. Note: Alpha Beta 7 might take too much
+                      time to play on your computer and Alpha Beta 9 will
+                      definitely take a long time to decide on the move it
+                      will take. </li>
+                  </ul>
 
-            At any one time you can extend your creep by clicking on a
-            colour adjacent to your creep. This will cause your creep
-            to expand and grow into all spaces of that colour that
-            touches your creep.<p/>
-
-            At the end of the game you might not have any more space
-            to grow, but your opponent might. Keep clicking on open
-            map position (positions not black or white) until your
-            opponent has filled them in. <p/>
-
-            <ul>
-              <li> The random AI simply chooses a random colour to grow into,
-                it might never terminate so watch out. This AI is
-                very stupid.</li>
-              <li> The Ordered AI simply iterates through all of the
-                colours regardless of adjacent colours. It is
-                guaranteed to terminate but it might take a few turns
-                to do so. This AI is stupid. </li>
-              <li> Maximum AI will maximize its creep size on every
-              move, it will probably beat you if you're not paying
-              attention.</li>
-              <li>Alpha Beta 1 through 9 uses AI alpha beta "pruning"
-              techniques without the pruning. This AI makes the
-              assumption that you are playing optimally (which you
-              aren't) so you might catch it up if it can't look ahead
-              far enough or you're playing like an idiot and somehow
-              that works out. Note: Alpha Beta 7 might take too much
-              time to play on your computer and Alpha Beta 9 will
-              definitely take a long time to decide on the move it
-              will take. </li>
-            </ul>
-
-
-          </div>
+                </div>
 	</body> 
 </html>
