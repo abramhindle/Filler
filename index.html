@@ -138,6 +138,50 @@ function alphabeta( maxdepth, board, player, x, y, oplayer, ox, oy) {
   return r[0];
       
 };
+function maxDistance( board, player, xi, yi) {
+  dm = 0;
+  for(y = 0; y < w; y++) {
+    for(x = 0; x < w; x++) {
+      var z = board[x + w * y];
+      if (z == player) {
+        var dx = x - xi,
+            dy = y - yi,
+            d  = dx * dx + dy * dy;
+        dm = (d > dm)?d:dm;
+      }
+    }
+  }
+  return dm;
+}
+// refactor alphabeta into a heuristic function
+function minimaxDist( maxdepth, board, player, x, y, oplayer, ox, oy) {
+  var choice = coff; 
+  var m = 0;
+  var helper = function(bd, p1, x1, y1, p2, x2, y2, depth, accm) {
+    var it = 0;
+    var m = -100000000;
+    var c = coff;
+    for( it = coff; it < coff+ncolor; it++) {
+      var bi = bd.concat();
+      var f = fillTouch( bi, p1, x1, y1, it );
+      var md = maxDistance( bi, p1, x1, y1 ); // heuristic
+      md = md * 10 + f;
+      if (depth < maxdepth) {
+        var r = helper(bi, p2, x2, y2, p1, x1, y1, depth+1, accm+" "+it);
+        md = md - r[1];
+      }
+      if (md >= m) {
+        c = it;
+        m = md;
+      }      
+    }
+    return [c,m];
+  };
+  var r = helper(board, player, x, y, oplayer, ox, oy, 0,"");
+  return r[0];
+      
+};
+
 
 
 var ai = maxai;
@@ -157,6 +201,16 @@ var ais = {
   "alpha beta 7": function(b, p, x, y, op, ox, oy) { return alphabeta(
   7, b,  p, x, y, op, ox, oy); },
   "alpha beta 9": function(b, p, x, y, op, ox, oy) { return alphabeta(
+  9, b,  p, x, y, op, ox, oy); },
+  "minimax distance 1": function(b, p, x, y, op, ox, oy) { return minimaxDist(
+  1, b,  p, x, y, op, ox, oy); },
+  "minimax distance 3": function(b, p, x, y, op, ox, oy) { return minimaxDist(
+  3, b,  p, x, y, op, ox, oy); },
+  "minimax distance 5": function(b, p, x, y, op, ox, oy) { return minimaxDist(
+  5, b,  p, x, y, op, ox, oy); },
+  "minimax distance 7": function(b, p, x, y, op, ox, oy) { return minimaxDist(
+  7, b,  p, x, y, op, ox, oy); },
+  "minimax distance 9": function(b, p, x, y, op, ox, oy) { return minimaxDist(
   9, b,  p, x, y, op, ox, oy); },
 
 };
@@ -224,6 +278,11 @@ newgame();
                   <a href="#" onclick="changeAI('alpha beta 5');">AlphaBeta 5</a>
                   <a href="#" onclick="changeAI('alpha beta 7');">AlphaBeta 7</a>
                   <a href="#" onclick="changeAI('alpha beta 9');">AlphaBeta 9</a>
+                  <a href="#" onclick="changeAI('minimax distance 1');">minimax distance 1</a>
+                  <a href="#" onclick="changeAI('minimax distance 3');">minimax distance 3</a>
+                  <a href="#" onclick="changeAI('minimax distance 5');">minimax distance 5</a>
+                  <a href="#" onclick="changeAI('minimax distance 7');">minimax distance 7</a>
+                  <a href="#" onclick="changeAI('minimax distance 9');">minimax distance 9</a>
                 </div>
                 <div id="instructions">
                   I was going to cut this down and make a 1K javascript
@@ -257,7 +316,7 @@ newgame();
                       move, it will probably beat you if you're not paying
                       attention.</li>
                     <li>Alpha Beta 1 through 9 uses AI alpha beta "pruning"
-                      techniques without the pruning. This AI makes the
+                      techniques without the pruning. It is really just the minimax algorithm. This AI makes the
                       assumption that you are playing optimally (which you
                       aren't) so you might catch it up if it can't look ahead
                       far enough or you're playing like an idiot and somehow
@@ -265,6 +324,11 @@ newgame();
                       time to play on your computer and Alpha Beta 9 will
                       definitely take a long time to decide on the move it
                       will take. </li>
+		    <li>Minimax Distance 1 through 9 is the alpha beta player
+but with a different strategy.  instead of trying to get maximal coverage, this
+AI tries to push the further limit of its creep. It tries to get across to the
+fartherest corners (particularly yours) as fast as it can and then once it hits
+that limit it will optimize for space.</li>
                   </ul>
 
                 </div>
