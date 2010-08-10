@@ -1,30 +1,26 @@
-//
+//player1 -> 0
+//player2 -> 1
+//fillTouch -> Z
 var W=16, // pixels per box was W now 
-    w=32, // size of map w * w
-    pw=512,
-    s=1024,
-    colors=["rgb(0,0,0)","rgb(255,255,255)","rgb(100,200,70)","rgb(160,50,120)","rgb(120,120,210)","rgb(70,210,200)"],
-    coff=2,
-    ncolor=4,
-    player1=0,
-    player2=1,
-    colorbase=2,
-    board=new Array(w * w),
-    m = document.getElementById("m"),
-    ig = document.getElementById("c");
+w=32, // size of map w * w
+pw=512,
+s=1024, 
+colors=["rgb(0,0,0)","rgb(255,255,255)","rgb(100,200,70)","rgb(160,50,120)","rgb(120,120,210)","rgb(70,210,200)"],
+coff=2,
+ncolor=4,
+colorbase=2,
+board=new Array(w * w),
+ig = document.getElementById("c");
 ig.width=ig.height=pw;
 function initboard() {
   var i=0;
   while(i<s){
-    board[i++] = Math.floor(Math.random()*ncolor+coff)
+    board[i++]=~~(Math.random()*ncolor+coff)
   }
-  board[0]   = player1;
-  board[s-1] = player2;
+  board[0]=0;
+  board[s-1]=1;
 }
 initboard();
-function debug( t ) {
-  document.getElementById("debug").innerHTML += "| " + t;
-}
 var ctx = ig.getContext('2d');
 var d = ctx.createImageData(pw,pw);
 function drawBoard() {
@@ -53,13 +49,13 @@ function fillFlood(board,xi,yi,c,rc) {
     return 0;
   }
 }
-function fillTouch(board, player, playerx, playery, c) {
+function Z(board, player, playerx, playery, c) {
   fillFlood(board, playerx, playery, player, c);
   return fillFlood(board, playerx, playery, c, player);
 }
 function testTouch(board, player, playerx, playery, c) {
   var b = board.concat();
-  return fillTouch( b, player, playerx, playery, c);
+  return Z( b, player, playerx, playery, c);
 }
 function maxai(board,player,x,y) {
   var c = coff, i=coff, m=0;
@@ -83,7 +79,7 @@ function alphabeta( board, player, x, y, oplayer, ox, oy) {
     var c = coff;
     for( it = coff; it < coff+ncolor; it++) {
       var bi = bd.concat();
-      var f = fillTouch( bi, p1, x1, y1, it );
+      var f = Z( bi, p1, x1, y1, it );
       if (depth < maxdepth) {
         var r = helper(bi, p2, x2, y2, p1, x1, y1, depth+1, accm+" "+it);
         f = f - r[1];
@@ -126,7 +122,7 @@ function minimaxDist( maxdepth, board, player, x, y, oplayer, ox, oy) {
     var c = coff;
     for( it = coff; it < coff+ncolor; it++) {
       var bi = bd.concat();
-      var f = fillTouch( bi, p1, x1, y1, it );
+      var f = Z( bi, p1, x1, y1, it );
       var md = maxDistance( bi, p1, x1, y1 ); // heuristic
       md = md * 10 + f;
       if (depth < maxdepth) {
@@ -155,19 +151,19 @@ function onClick(e) {
   var y = ~~((e.clientY - ig.offsetTop)/W);
   var i = pos(x,y);
   var c = board[ i ];
-  if (c > player2) {
-    //fillFlood(board, x,y,c, player1);
+  if (c > 1) {
+    //fillFlood(board, x,y,c, 0);
     // us
-    var us = fillTouch( board, player1, 0, 0, c );
+    var us = Z( board, 0, 0, 0, c );
     // them
-    var them = fillTouch( board, player2, w-1, w-1, ai(board,player2,w-1,w-1,player1,0,0) );
-    //board[ i ] = player1;
+    var them = Z( board, 1, w-1, w-1, ai(board,1,w-1,w-1,0,0,0) );
+    //board[ i ] = 0;
     var st = "Us: "+us+" Them: "+them;
     if (us + them == s) {
       if (us > them) {
-        fillTouch(board,player2,w-1,w-1,player1);
+        Z(board,1,w-1,w-1,0);
       } else {
-        fillTouch(board,player2,w-1,w-1,player1);
+        Z(board,1,w-1,w-1,0);
       } 
     }
     drawBoard();  
