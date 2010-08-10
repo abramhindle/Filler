@@ -23,17 +23,17 @@ function initboard() {
   board[s-1]=1;
 }
 initboard();
+function pos(x,y) { return w * y + x }
 function drawBoard() {
   var x,y;
-  for(y = 0; y < w; y++) {
-    for(x = 0; x < w; x++) {
-      var z = board[x + w * y];
+  for(y=0;y<w;y++) {
+    for(x=0;x<w;x++) {
+      var z=board[pos(x,y)];
       ctx.fillStyle = colors[z];
       ctx.fillRect(x * W, y * W, W, W);
     }
   }
 }
-function pos(x,y) { return w * y + x }
 function bounds(x,y) { return (x >= 0 && x < w && y >= 0 && y < w) }
 function fillFlood(board,xi,yi,c,rc) {
   if (!bounds(xi,yi)) { return 0; }
@@ -147,10 +147,10 @@ var ai = alphabeta;
 
 
 function onClick(e) {
-  var x = ~~((e.clientX - ig.offsetLeft)/W) ;
-  var y = ~~((e.clientY - ig.offsetTop)/W);
-  var i = pos(x,y);
-  var c = board[ i ];
+  var x= ~~((e.clientX-ig.offsetLeft)/W),
+      y=~~((e.clientY-ig.offsetTop)/W),
+      i=pos(x,y),
+      c=board[i];
   if (c > 1) {
     //fillFlood(board, x,y,c, 0);
     // us
