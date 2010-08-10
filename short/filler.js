@@ -10,7 +10,9 @@ coff=2,
 ncolor=4,
 colorbase=2,
 board=new Array(w * w),
-ig = document.getElementById("c");
+ig=document.getElementById("c"),
+ctx = ig.getContext('2d'),
+d = ctx.createImageData(pw,pw);
 ig.width=ig.height=pw;
 function initboard() {
   var i=0;
@@ -21,8 +23,6 @@ function initboard() {
   board[s-1]=1;
 }
 initboard();
-var ctx = ig.getContext('2d');
-var d = ctx.createImageData(pw,pw);
 function drawBoard() {
   var x,y;
   for(y = 0; y < w; y++) {
