@@ -4,7 +4,7 @@
 var W=16, // pixels per box was W now 
 w=32, // size of map w * w
 pw=512,
-s=1024, 
+s=1024,
 colors=["rgb(0,0,0)","rgb(255,255,255)","rgb(100,200,70)","rgb(160,50,120)","rgb(120,120,210)","rgb(70,210,200)"],
 coff=2,
 ncolor=4,
