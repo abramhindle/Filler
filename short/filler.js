@@ -11,8 +11,8 @@ ncolor=4,
 colorbase=2,
 board=new Array(w * w),
 ig=document.getElementById("c"),
-ctx = ig.getContext('2d'),
-d = ctx.createImageData(pw,pw);
+ctx=ig.getContext('2d'),
+d=ctx.createImageData(pw,pw);
 ig.width=ig.height=pw;
 function initboard() {
   var i=0;
@@ -29,7 +29,7 @@ function drawBoard() {
   for(y=0;y<w;y++) {
     for(x=0;x<w;x++) {
       var z=board[pos(x,y)];
-      ctx.fillStyle = colors[z];
+      ctx.fillStyle=colors[z];
       ctx.fillRect(x * W, y * W, W, W);
     }
   }
@@ -37,9 +37,9 @@ function drawBoard() {
 function bounds(x,y) { return (x >= 0 && x < w && y >= 0 && y < w) }
 function fillFlood(board,xi,yi,c,rc) {
   if (!bounds(xi,yi)) { return 0; }
-  var i = pos(xi,yi);
-  if (board[i] == c) {
-    board[i] = rc;
+  var i=pos(xi,yi);
+  if (board[i]==c) {
+    board[i]=rc;
     return 1 + 
            fillFlood(board, xi+1,yi,c,rc) +
            fillFlood(board, xi-1,yi,c,rc) +
@@ -54,26 +54,24 @@ function Z(board, player, playerx, playery, c) {
   return fillFlood(board, playerx, playery, c, player);
 }
 function testTouch(board, player, playerx, playery, c) {
-  var b = board.concat();
+  var b=board.concat();
   return Z( b, player, playerx, playery, c);
 }
 function maxai(board,player,x,y) {
-  var c = coff, i=coff, m=0;
-  for(i = coff; i < coff+ncolor; i++) {
-    var v = testTouch(board,player,x,y,i);
+  var c=coff,i=coff,m=0;
+  for(i=coff;i<coff+ncolor;i++) {
+    var v=testTouch(board,player,x,y,i);
     //debug(v+" " +i+" "+m+" "+player+" "+x+" "+y);
-    if (m < v) {
-      c = i; m = v;      
+    if(m<v){
+      c=i;m=v;      
     }
   }
   return c;
 }
 
-function alphabeta( board, player, x, y, oplayer, ox, oy) { 
-  var maxdepth=3;
-  var choice = coff; 
-  var m = 0;
-  var helper = function(bd, p1, x1, y1, p2, x2, y2, depth, accm) {
+function alphabeta(board,player,x,y,oplayer,ox,oy) { 
+  var maxdepth=3,choice=coff,m=0,
+  helper=function(bd,p1,x1,y1,p2,x2,y2,depth,accm) {
     var it = 0;
     var m = -100000000;
     var c = coff;
@@ -85,28 +83,26 @@ function alphabeta( board, player, x, y, oplayer, ox, oy) {
         f = f - r[1];
 
       }
-      if (f >= m) {
-        c = it;
-        m = f;
+      if (f>=m) {
+        c=it;
+        m=f;
       }      
     }
     return [c,m];
   };
-  var r = helper(board, player, x, y, oplayer, ox, oy, 0,"");
-  //debug(r); 
+  return helper(board,player,x,y,oplayer,ox,oy,0,"")[0];
   return r[0];
-      
-};
+}
 function maxDistance( board, player, xi, yi) {
-  dm = 0;
-  for(y = 0; y < w; y++) {
-    for(x = 0; x < w; x++) {
-      var z = board[x + w * y];
-      if (z == player) {
-        var dx = x - xi,
-            dy = y - yi,
-            d  = dx * dx + dy * dy;
-        dm = (d > dm)?d:dm;
+  dm=0;
+  for(y=0;y<w;y++) {
+    for(x=0;x<w;x++) {
+      var z=board[pos(x,y)];
+      if (z==player) {
+        var dx=x-xi,
+            dy=y-yi,
+            d=dx*dx+dy*dy;
+        dm=(d>dm)?d:dm;
       }
     }
   }
@@ -158,7 +154,6 @@ function onClick(e) {
     // them
     var them = Z( board, 1, w-1, w-1, ai(board,1,w-1,w-1,0,0,0) );
     //board[ i ] = 0;
-    var st = "Us: "+us+" Them: "+them;
     if (us + them == s) {
       if (us > them) {
         Z(board,1,w-1,w-1,0);
