@@ -12,8 +12,8 @@ v=31,
 colors=["rgb(0,0,0)","rgb(255,255,255)","rgb(100,200,70)","rgb(160,50,120)","rgb(120,120,210)","rgb(70,210,200)"],
 b=new Array(w * w),
 ig=document.getElementById("c"),
-ctx=ig.getContext('2d'),
-d=ctx.createImageData(pw,pw);
+ctx=ig.getContext('2d');
+ctx.createImageData(pw,pw);
 ig.width=ig.height=pw;
 var i=0;
 while(i<s){
@@ -21,12 +21,11 @@ while(i<s){
 }
 b[0]=0;
 b[s-1]=1;
-function pos(x,y){ return w * y + x }
 function drawBoard(){
   var x,y;
   for(y=0;y<w;y++){
     for(x=0;x<w;x++){
-      var z=b[pos(x,y)];
+      var z=b[w*y+x];
       ctx.fillStyle=colors[z];
       ctx.fillRect(x*u,y*u,u,u);
     }
@@ -35,7 +34,7 @@ function drawBoard(){
 function bounds(x,y){ return (x >= 0 && x < w && y >= 0 && y < w) }
 function h(b,xi,yi,c,rc){ //fillflood
   if (!bounds(xi,yi)){ return 0; }
-  var i=pos(xi,yi);
+  var i=w*yi+xi;
   if (b[i]==c){
     b[i]=rc;
     return 1+ 
@@ -78,10 +77,10 @@ function ai(b,p,x,y,o,ox,oy){
 
 
 
-function onClick(e){
+ig.onclick=function(e){
   var x=~~((e.clientX-ig.offsetLeft)/u),
       y=~~((e.clientY-ig.offsetTop)/u),
-      i=pos(x,y),
+      i=w*y+x,
       c=b[i];
   if (c > 1){
     // us
@@ -98,6 +97,5 @@ function onClick(e){
     }
     drawBoard();  
   }
-}
-ig.onclick=onClick;
+};
 drawBoard();
