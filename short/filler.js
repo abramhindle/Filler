@@ -1,6 +1,6 @@
 //player1 -> 0
 //player2 -> 1
-//fillTouch -> Z
+//fillTouch -> q
 var W=16, // pixels per box was W now 
 w=32, // size of map w * w
 pw=512,
@@ -49,13 +49,13 @@ function fillFlood(board,xi,yi,c,rc) {
     return 0;
   }
 }
-function Z(board, player, playerx, playery, c) {
+function q(board, player, playerx, playery, c) {
   fillFlood(board, playerx, playery, player, c);
   return fillFlood(board, playerx, playery, c, player);
 }
 function testTouch(board, player, playerx, playery, c) {
   var b=board.concat();
-  return Z( b, player, playerx, playery, c);
+  return q( b, player, playerx, playery, c);
 }
 function maxai(board,player,x,y) {
   var c=coff,i=coff,m=0;
@@ -77,7 +77,7 @@ function alphabeta(board,player,x,y,oplayer,ox,oy) {
     var c = coff;
     for( it = coff; it < coff+ncolor; it++) {
       var bi = bd.concat();
-      var f = Z( bi, p1, x1, y1, it );
+      var f = q( bi, p1, x1, y1, it );
       if (depth < maxdepth) {
         var r = helper(bi, p2, x2, y2, p1, x1, y1, depth+1, accm+" "+it);
         f = f - r[1];
@@ -99,22 +99,22 @@ var ai = alphabeta;
 
 
 function onClick(e) {
-  var x= ~~((e.clientX-ig.offsetLeft)/W),
+  var x=~~((e.clientX-ig.offsetLeft)/W),
       y=~~((e.clientY-ig.offsetTop)/W),
       i=pos(x,y),
       c=board[i];
   if (c > 1) {
     //fillFlood(board, x,y,c, 0);
     // us
-    var us = Z( board, 0, 0, 0, c );
+    var us = q( board, 0, 0, 0, c );
     // them
-    var them = Z( board, 1, w-1, w-1, ai(board,1,w-1,w-1,0,0,0) );
+    var them = q( board, 1, w-1, w-1, ai(board,1,w-1,w-1,0,0,0) );
     //board[ i ] = 0;
     if (us + them == s) {
       if (us > them) {
-        Z(board,1,w-1,w-1,0);
+        q(board,1,w-1,w-1,0);
       } else {
-        Z(board,1,w-1,w-1,0);
+        q(board,1,w-1,w-1,0);
       } 
     }
     drawBoard();  
