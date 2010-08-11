@@ -1,7 +1,7 @@
 //player1 -> 0
 //player2 -> 1
 //fillTouch -> q
-var W=16, // pixels per box was W now 
+var u=16, // pixels per box was W now 
 w=32, // size of map w * w
 pw=512,
 s=1024,
@@ -9,7 +9,7 @@ colors=["rgb(0,0,0)","rgb(255,255,255)","rgb(100,200,70)","rgb(160,50,120)","rgb
 coff=2,
 ncolor=4,
 colorbase=2,
-board=new Array(w * w),
+b=new Array(w * w),
 ig=document.getElementById("c"),
 ctx=ig.getContext('2d'),
 d=ctx.createImageData(pw,pw);
@@ -17,10 +17,10 @@ ig.width=ig.height=pw;
 function initboard() {
   var i=0;
   while(i<s){
-    board[i++]=~~(Math.random()*ncolor+coff)
+    b[i++]=~~(Math.random()*ncolor+coff)
   }
-  board[0]=0;
-  board[s-1]=1;
+  b[0]=0;
+  b[s-1]=1;
 }
 initboard();
 function pos(x,y) { return w * y + x }
@@ -28,39 +28,38 @@ function drawBoard() {
   var x,y;
   for(y=0;y<w;y++) {
     for(x=0;x<w;x++) {
-      var z=board[pos(x,y)];
+      var z=b[pos(x,y)];
       ctx.fillStyle=colors[z];
-      ctx.fillRect(x * W, y * W, W, W);
+      ctx.fillRect(x*u,y*u,u,u);
     }
   }
 }
 function bounds(x,y) { return (x >= 0 && x < w && y >= 0 && y < w) }
-function fillFlood(board,xi,yi,c,rc) {
+function fillFlood(b,xi,yi,c,rc) {
   if (!bounds(xi,yi)) { return 0; }
   var i=pos(xi,yi);
-  if (board[i]==c) {
-    board[i]=rc;
+  if (b[i]==c) {
+    b[i]=rc;
     return 1 + 
-           fillFlood(board, xi+1,yi,c,rc) +
-           fillFlood(board, xi-1,yi,c,rc) +
-           fillFlood(board, xi,yi-1,c,rc) +
-           fillFlood(board, xi,yi+1,c,rc);    
+           fillFlood(b, xi+1,yi,c,rc) +
+           fillFlood(b, xi-1,yi,c,rc) +
+           fillFlood(b, xi,yi-1,c,rc) +
+           fillFlood(b, xi,yi+1,c,rc);    
   } else {
     return 0;
   }
 }
-function q(board, player, playerx, playery, c) {
-  fillFlood(board, playerx, playery, player, c);
-  return fillFlood(board, playerx, playery, c, player);
+function q(b, player, playerx, playery, c) {
+  fillFlood(b, playerx, playery, player, c);
+  return fillFlood(b, playerx, playery, c, player);
 }
-function testTouch(board, player, playerx, playery, c) {
-  var b=board.concat();
-  return q( b, player, playerx, playery, c);
+function testTouch(b, player, playerx, playery, c) {
+  return q( b.concat(), player, playerx, playery, c);
 }
-function maxai(board,player,x,y) {
+function maxai(b,player,x,y) {
   var c=coff,i=coff,m=0;
   for(i=coff;i<coff+ncolor;i++) {
-    var v=testTouch(board,player,x,y,i);
+    var v=testTouch(b,player,x,y,i);
     //debug(v+" " +i+" "+m+" "+player+" "+x+" "+y);
     if(m<v){
       c=i;m=v;      
@@ -69,7 +68,7 @@ function maxai(board,player,x,y) {
   return c;
 }
 
-function alphabeta(board,player,x,y,oplayer,ox,oy) { 
+function alphabeta(b,player,x,y,oplayer,ox,oy) { 
   var maxdepth=3,choice=coff,m=0,
   helper=function(bd,p1,x1,y1,p2,x2,y2,depth,accm) {
     var it = 0;
@@ -90,7 +89,7 @@ function alphabeta(board,player,x,y,oplayer,ox,oy) {
     }
     return [c,m];
   };
-  return helper(board,player,x,y,oplayer,ox,oy,0,"")[0];
+  return helper(b,player,x,y,oplayer,ox,oy,0,"")[0];
   return r[0];
 }
 
@@ -99,22 +98,21 @@ var ai = alphabeta;
 
 
 function onClick(e) {
-  var x=~~((e.clientX-ig.offsetLeft)/W),
-      y=~~((e.clientY-ig.offsetTop)/W),
+  var x=~~((e.clientX-ig.offsetLeft)/u),
+      y=~~((e.clientY-ig.offsetTop)/u),
       i=pos(x,y),
-      c=board[i];
+      c=b[i];
   if (c > 1) {
-    //fillFlood(board, x,y,c, 0);
     // us
-    var us = q( board, 0, 0, 0, c );
+    var us = q( b, 0, 0, 0, c );
     // them
-    var them = q( board, 1, w-1, w-1, ai(board,1,w-1,w-1,0,0,0) );
+    var them = q( b, 1, w-1, w-1, ai(b,1,w-1,w-1,0,0,0) );
     //board[ i ] = 0;
     if (us + them == s) {
       if (us > them) {
-        q(board,1,w-1,w-1,0);
+        q(b,1,w-1,w-1,0);
       } else {
-        q(board,1,w-1,w-1,0);
+        q(b,1,w-1,w-1,0);
       } 
     }
     drawBoard();  
