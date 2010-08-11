@@ -14,15 +14,6 @@ ig=document.getElementById("c"),
 ctx=ig.getContext('2d'),
 d=ctx.createImageData(pw,pw);
 ig.width=ig.height=pw;
-function initboard() {
-  var i=0;
-  while(i<s){
-    b[i++]=~~(Math.random()*ncolor+coff)
-  }
-  b[0]=0;
-  b[s-1]=1;
-}
-initboard();
 function pos(x,y) { return w * y + x }
 function drawBoard() {
   var x,y;
@@ -119,5 +110,10 @@ function onClick(e) {
   }
 }
 ig.onclick=onClick;
-initboard();
+i=0;
+while(i--){
+    b[i]=~~(Math.random()*ncolor+coff)
+}
+  b[0]=0;
+  b[s-1]=1;
 drawBoard();
