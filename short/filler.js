@@ -93,50 +93,6 @@ function alphabeta(board,player,x,y,oplayer,ox,oy) {
   return helper(board,player,x,y,oplayer,ox,oy,0,"")[0];
   return r[0];
 }
-function maxDistance( board, player, xi, yi) {
-  dm=0;
-  for(y=0;y<w;y++) {
-    for(x=0;x<w;x++) {
-      var z=board[pos(x,y)];
-      if (z==player) {
-        var dx=x-xi,
-            dy=y-yi,
-            d=dx*dx+dy*dy;
-        dm=(d>dm)?d:dm;
-      }
-    }
-  }
-  return dm;
-}
-// refactor alphabeta into a heuristic function
-function minimaxDist( maxdepth, board, player, x, y, oplayer, ox, oy) {
-  var choice = coff; 
-  var m = 0;
-  var helper = function(bd, p1, x1, y1, p2, x2, y2, depth, accm) {
-    var it = 0;
-    var m = -100000000;
-    var c = coff;
-    for( it = coff; it < coff+ncolor; it++) {
-      var bi = bd.concat();
-      var f = Z( bi, p1, x1, y1, it );
-      var md = maxDistance( bi, p1, x1, y1 ); // heuristic
-      md = md * 10 + f;
-      if (depth < maxdepth) {
-        var r = helper(bi, p2, x2, y2, p1, x1, y1, depth+1, accm+" "+it);
-        md = md - r[1];
-      }
-      if (md >= m) {
-        c = it;
-        m = md;
-      }      
-    }
-    return [c,m];
-  };
-  var r = helper(board, player, x, y, oplayer, ox, oy, 0,"");
-  return r[0];
-      
-};
-
 
 
 var ai = alphabeta;
