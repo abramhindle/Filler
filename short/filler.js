@@ -8,6 +8,7 @@ var u=16, // pixels per box was W now
 w=32, // size of map w * w
 pw=512,
 s=1024,
+v=31,
 colors=["rgb(0,0,0)","rgb(255,255,255)","rgb(100,200,70)","rgb(160,50,120)","rgb(120,120,210)","rgb(70,210,200)"],
 b=new Array(w * w),
 ig=document.getElementById("c"),
@@ -52,7 +53,7 @@ function q(b,p,x,y,c){
 }
 function ai(b,p,x,y,o,ox,oy){ 
   var choice=2,m=0,
-  helper=function(bd,p1,x1,y1,p2,x2,y2,d){
+  h=function(bd,p1,x1,y1,p2,x2,y2,d){
     var i=0,
     m=-s*s*s,//100000000;
     c=2;
@@ -60,8 +61,8 @@ function ai(b,p,x,y,o,ox,oy){
       var bi=bd.concat(),
       f=q(bi,p1,x1,y1,i);
       if (d<3){
-        var r = helper(bi,p2,x2,y2,p1,x1,y1,d+1);
-        f = f - r[1];
+        var r=h(bi,p2,x2,y2,p1,x1,y1,d+1);
+        f=f-r[1];
 
       }
       if (f>=m){
@@ -71,8 +72,7 @@ function ai(b,p,x,y,o,ox,oy){
     }
     return [c,m];
   };
-  return helper(b,p,x,y,o,ox,oy,0)[0];
-  return r[0];
+  return h(b,p,x,y,o,ox,oy,0)[0];
 }
 
 
@@ -85,15 +85,15 @@ function onClick(e){
       c=b[i];
   if (c > 1){
     // us
-    var us = q( b, 0, 0, 0, c );
+    a=q(b,0,0,0,c);
     // them
-    var them = q( b, 1, w-1, w-1, ai(b,1,w-1,w-1,0,0,0) );
+    c=q(b,1,v,v,ai(b,1,v,v,0,0,0));
     //board[ i ] = 0;
-    if (us + them == s){
-      if (us > them){
-        q(b,1,w-1,w-1,0);
+    if (a+c==s){
+      if (a>c){
+        q(b,0,v,v,1);
       } else {
-        q(b,1,w-1,w-1,0);
+        q(b,1,0,0,0);
       } 
     }
     drawBoard();  
