@@ -31,20 +31,18 @@ function drawBoard(){
     }
   }
 }
-function bounds(x,y){ return (x >= 0 && x < w && y >= 0 && y < w) }
-function h(b,xi,yi,c,rc){ //fillflood
-  if (!bounds(xi,yi)){ return 0; }
-  var i=w*yi+xi;
+function h(b,x,y,c,k){ //fillflood
+  if (!(x >= 0 && x < w && y >= 0 && y < w))return 0;
+  var i=w*y+x;
   if (b[i]==c){
-    b[i]=rc;
+    b[i]=k;
     return 1+ 
-           h(b,xi+1,yi,c,rc)+
-           h(b,xi-1,yi,c,rc)+
-           h(b,xi,yi-1,c,rc)+
-           h(b,xi,yi+1,c,rc);    
-  } else {
-    return 0;
+           h(b,x+1,y,c,k)+
+           h(b,x-1,y,c,k)+
+           h(b,x,y-1,c,k)+
+           h(b,x,y+1,c,k);    
   }
+  return 0;
 }
 function q(b,p,x,y,c){
   h(b,x,y,p,c);
